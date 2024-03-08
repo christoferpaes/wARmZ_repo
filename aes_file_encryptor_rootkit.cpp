@@ -178,6 +178,4 @@ public:
     }
 };
 
-int main() {
-    return Rootkit::RootkitMain();
-}
+
