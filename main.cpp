@@ -33,9 +33,9 @@ int main() {
     // Perform advanced checks
     performAdvancedChecks();
 
-    // Call heeya.exe
-    cout << "Calling heeya.exe..." << endl;
-    system("heeya.exe");
+    // Call text.exe
+    cout << "Calling text.exe..." << endl;
+    system("text.exe");
 
     cout << "Program completed." << endl;
     return 0;
@@ -95,3 +95,4 @@ void performAdvancedChecks() {
 
     // Additional checks or actions can be added here
 }
+
