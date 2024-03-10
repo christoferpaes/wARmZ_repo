@@ -609,7 +609,3 @@ std::string generateMutatedCode()
 
 )";
 }
-
-
-
-};

