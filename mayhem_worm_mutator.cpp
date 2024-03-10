@@ -63,7 +63,7 @@ public:
    
 
 private:
-    void applyRandomTemplate(ASTNode* node) {
+   void applyRandomTemplate(ASTNode* node) {
     // Check if the node is suitable for applying a template (optional)
     if (node == nullptr) {
         std::cerr << "Error: Null node provided." << std::endl;
@@ -326,3 +326,6 @@ void MayhemWorm::compileAndReplace(const std::string& mutatedCode) {
 }
 };
 )";}
+
+
+};
