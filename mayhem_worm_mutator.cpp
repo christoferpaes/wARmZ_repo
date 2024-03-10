@@ -11,11 +11,18 @@ struct ASTNode {
     std::string type;
     std::vector<ASTNode*> children;
     ASTNode(std::string t, std::vector<ASTNode*> c) : type(t), children(c) {}
-
-    std::string getAttribute(std::string attributeName) {
-        // Logic to retrieve attribute value
-        return ""; // Placeholder return value
+//We assume that the attributes are stored in a std::unordered_map<std::string, std::string>, 
+    std::string getAttribute(const std::string& attributeName) {
+    // Search for the attribute in the map
+    auto it = attributes.find(attributeName);
+    if (it != attributes.end()) {
+        // If attribute found, return its value
+        return it->second;
+    } else {
+        // If attribute not found, return an empty string or some default value
+        return "";
     }
+}
 };
 
 class MayhemWorm {
