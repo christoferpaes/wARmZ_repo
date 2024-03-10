@@ -63,10 +63,47 @@ public:
    
 
 private:
-    void applyRandomTemplate(ASTNode* node) {}
+    void applyRandomTemplate(ASTNode* node) {
+    // Check if the node is suitable for applying a template (optional)
+    if (node == nullptr) {
+        std::cerr << "Error: Null node provided." << std::endl;
+        return;
+    }
 
-    // Other private member functions...
+    // Check if the node has any children to apply templates recursively (optional)
+    if (node->children.empty()) {
+        std::cerr << "No children to apply templates." << std::endl;
+        return;
+    }
+
+    // Seed the random number generator
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+    // Generate a random index to select a template from a list of available templates
+    int templateIndex = std::rand() % availableTemplates.size();
+
+    // Apply the selected template to the node
+    std::string selectedTemplate = availableTemplates[templateIndex];
+    std::cout << "Applying template: " << selectedTemplate << std::endl;
+
+    // Logic to apply the template to the ASTNode
+    // Example: Modifying the node's type
+    node->type = selectedTemplate;
+
+    // Notify the user that the template has been applied
+    std::cout << "Template applied successfully." << std::endl;
+}
+
+// Other private member functions...
+
+// List of available templates
+std::vector<std::string> availableTemplates = {
+    "Template_A",
+    "Template_B",
+    "Template_C"
+    // Add more templates as needed
 };
+
 
 void mutateCode() {
     std::string filename = "mayhem_worm_mutator.cpp";
