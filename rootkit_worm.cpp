@@ -8,10 +8,10 @@
 #include <TlHelp32.h>
 #include <Shellapi.h>
 
-// Declaration of IsValidExecutableFunc
-typedef bool (*IsValidExecutableFunc)(const std::string&);
-
 namespace fs = std::filesystem;
+
+// Define function pointer type for isValidExecutable function
+typedef bool (*IsValidExecutableFunc)(const std::string&);
 
 class ProcessHider {
 public:
@@ -98,8 +98,23 @@ public:
     }
 
     static bool IsValidExecutable(const std::string& filePath) {
-        // Placeholder implementation
-        return false;
+        HINSTANCE dllHandle = LoadLibrary("isValidExecutable.dll");
+        if (dllHandle == NULL) {
+            return false;
+        }
+
+        // Load the function pointer from DLL
+        IsValidExecutableFunc isValidExecutable = reinterpret_cast<IsValidExecutableFunc>(GetProcAddress(dllHandle, "isValidExecutable"));
+        if (isValidExecutable == NULL) {
+            FreeLibrary(dllHandle);
+            return false;
+        }
+
+        // Call the function
+        bool result = isValidExecutable(filePath);
+
+        FreeLibrary(dllHandle);
+        return result;
     }
 };
 
