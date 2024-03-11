@@ -12,4 +12,4 @@ class files for various worms and encryptor objects
 
 The executable is called U_WIN_!!(rootkit_worm & enigmaticWorm) are not currently implemented.
 </br>
-![Alt text](warmz_images/worms.png)
+![Alt text](Warmz_images/worms.png)
