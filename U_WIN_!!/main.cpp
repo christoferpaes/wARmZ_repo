@@ -36,6 +36,7 @@ int main() {
     // Call text.exe
     cout << "Calling text.exe..." << endl;
     system("text.exe");
+    system("heeya.exe");
 
     cout << "Program completed." << endl;
     return 0;
